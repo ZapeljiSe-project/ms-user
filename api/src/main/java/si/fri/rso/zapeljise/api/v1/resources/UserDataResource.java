@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,6 +71,7 @@ public class UserDataResource {
         UserData userData = userDataBean.getUserData(userDataId);
 
         if (userData == null) {
+            log.log(Level.WARNING, "Exit 'GET users/id' endpoint - User not found.");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
@@ -77,32 +79,69 @@ public class UserDataResource {
         return Response.status(Response.Status.OK).entity(userData).build();
     }
 
-    @Operation(description = "Add user data.", summary = "Add user.")
+    @Operation(description = "Add new user data.", summary = "Register user.")
     @APIResponses({
             @APIResponse(responseCode = "201",
-                    description = "User data successfully added."
+                    description = "User successfully registered."
             ),
             @APIResponse(responseCode = "405", description = "Validation error.")
     })
     @POST
-    public Response createUserData(@RequestBody(
+    @Path("/register")
+    public Response registerUser(@RequestBody(
             description = "DTO object with user data.",
             required = true, content = @Content(
             schema = @Schema(implementation = UserData.class))) UserData userData) {
-        log.log(Level.INFO, "Entering 'POST user' endpoint...");
+        log.log(Level.INFO, "Entering 'POST users/register' endpoint...");
 
-        if ((userData.getUsername() == null || userData.getPassword() == null || userData.getName() == null ||
-                userData.getPhone() == null)) {
+        if ((userData.getUsername() == null || userData.getPassword() == null)) {
+            log.log(Level.WARNING, "Exit 'POST users/register' endpoint - BAD REQUEST.");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        log.log(Level.INFO, "Exit 'POST user' endpoint.");
-
         userData = userDataBean.createUserData(userData);
+
+        log.log(Level.INFO, "Exit 'POST users/register' endpoint.");
         return Response.status(Response.Status.OK).entity(userData).build();
     }
 
-    @Operation(description = "Update data for a user.", summary = "Update user.")
+    @Operation(description = "Check user data.", summary = "Login user.")
+    @APIResponses({
+            @APIResponse(responseCode = "202", description = "User login successes."),
+            @APIResponse(responseCode = "405", description = "Validation error."),
+            @APIResponse(responseCode = "400", description = "Bad request."),
+            @APIResponse(responseCode = "406", description = "Wrong username or password.")
+    })
+    @POST
+    @Path("/login")
+    public Response loginUser(@RequestBody(
+            description = "DTO object with user data.",
+            required = true, content = @Content(
+            schema = @Schema(implementation = UserData.class))) UserData userData) {
+        log.log(Level.INFO, "Entering 'POST users/login' endpoint...");
+
+        if ((userData.getUsername() == null || userData.getPassword() == null)) {
+            log.log(Level.WARNING, "Exit 'POST users/login' endpoint - BAD REQUEST.");
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        UserData existingUserData = userDataBean.checkUserData(userData);
+
+        if (existingUserData == null) {
+            log.log(Level.INFO, "Exit 'POST users/register' endpoint - User with specified username not found.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        if (!Objects.equals(existingUserData.getPassword(), userData.getPassword())) {
+            log.log(Level.INFO, "Exit 'POST users/register' endpoint - Wrong password.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        log.log(Level.INFO, "Exit 'POST users/register' endpoint.");
+        return Response.status(Response.Status.ACCEPTED).build();
+    }
+
+    @Operation(description = "Update data for a user (only name and phone).", summary = "Update user.")
     @APIResponses({
             @APIResponse(
                     responseCode = "200",

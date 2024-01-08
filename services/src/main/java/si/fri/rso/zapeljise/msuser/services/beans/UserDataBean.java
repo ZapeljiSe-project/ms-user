@@ -10,6 +10,7 @@ import si.fri.rso.zapeljise.msuser.models.entities.UserDataEntity;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriInfo;
@@ -52,6 +53,19 @@ public class UserDataBean {
         log.log(Level.INFO, "Successfully retrieved user data.");
         UserData userData = UserDataConverter.toDto(userDataEntity);
         return userData;
+    }
+
+    public UserData checkUserData(UserData userData) {
+        TypedQuery<UserDataEntity> query = em.createNamedQuery("UserDataEntity.getUsernames", UserDataEntity.class);
+
+        query.setParameter("username", userData.getUsername());
+
+        try {
+            UserDataEntity userDataEntity = query.getSingleResult();
+            return UserDataConverter.toDto(userDataEntity);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public UserData createUserData(UserData userData) {
