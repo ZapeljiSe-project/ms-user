@@ -86,6 +86,10 @@ public class UserDataBean {
 
         UserDataEntity updatedUserDataEntity = UserDataConverter.toEntity(userData);
 
+        // Whatever is being sent, do not change username and password. It is forbidden by business logic.
+        updatedUserDataEntity.setUsername(c.getUsername());
+        updatedUserDataEntity.setPassword(c.getPassword());
+
         try {
             beginTx();
             updatedUserDataEntity.setId(c.getId());

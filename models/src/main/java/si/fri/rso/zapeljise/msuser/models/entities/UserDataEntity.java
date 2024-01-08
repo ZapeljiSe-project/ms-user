@@ -3,7 +3,7 @@ package si.fri.rso.zapeljise.msuser.models.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "User")
+@Table(name = "usertbl")
 @NamedQueries(value =
         {
                 @NamedQuery(name = "UserDataEntity.getAll",
@@ -14,16 +14,16 @@ public class UserDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "Username")
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "Password")
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "Phone")
+    @Column(name = "phone")
     private String phone;
 
     public Integer getId() {

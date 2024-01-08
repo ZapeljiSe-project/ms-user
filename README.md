@@ -70,13 +70,6 @@ mvn clean package...
 ```
 
 -----
-**Body of POST endpoint for adding new user:**
-```
-{
-}
-```
-
------
 **Local URL's:**
 - Backend API available at: http://localhost:8081/v1/users
 - Swagger OpenAPI: http://localhost:8081/api-specs/ui
