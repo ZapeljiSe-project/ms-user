@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-user-deployment
+  namespace: ingress-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-user
+  template:
+    metadata:
+      labels:
+        app: ms-user
+    spec:
+      containers:
+        - image: gh6987/rso-user:ms-user-2024-01-04-23-47-05 #to be changed
+          name: ms-user
+          env:
+            - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+              value: jdbc:postgresql://balarama.db.elephantsql.com:5432/vwzlirwy
+            - name: KUMULUZEE_DATASOURCES0_USERNAME
+              value: vwzlirwy
+            - name: KUMULUZEE_DATASOURCES0_PASSWORD
+              valueFrom: #use Kubernetes secret for storing the password
+                secretKeyRef:
+                  name: pg-pass-user
+                  key: password
+          ports:
+            - containerPort: 8081
+              name: server
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-user
+  namespace: ingress-nginx
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: ms-user
