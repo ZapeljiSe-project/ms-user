@@ -81,13 +81,13 @@ mvn clean package...
 
 -----
 **Production URL's:**
-- Backend API available at: http://20.253.101.2/ms-user/v1/users
-- Swagger OpenAPI: http://20.253.101.2/ms-user/api-specs/ui/?url=http://20.253.101.2/ms-user/openapi&oauth2RedirectUrl=http://20.253.101.2/ms-user/api-specs/ui/oauth2-redirect.html
-- Health Check (liveness): http://20.253.101.2/ms-user/health/live
-- Health Check (readiness): http://20.253.101.2/ms-user/health/ready
-- POST call to demonstrate unhealthy service: http://20.253.101.2/ms-user/v1/demo/break
-- POST call to demonstrate healthy service: http://20.253.101.2/ms-user/v1/demo/repair
-- Metrics: http://20.253.101.2/ms-user/metrics/
+- Backend API available at: http://52.188.141.107/ms-user/v1/users
+- Swagger OpenAPI: http://52.188.141.107/ms-user/api-specs/ui/?url=http://52.188.141.107/ms-user/openapi&oauth2RedirectUrl=http://52.188.141.107/ms-user/api-specs/ui/oauth2-redirect.html
+- Health Check (liveness): http://52.188.141.107/ms-user/health/live
+- Health Check (readiness): http://52.188.141.107/ms-user/health/ready
+- POST call to demonstrate unhealthy service: http://52.188.141.107/ms-user/v1/demo/break
+- POST call to demonstrate healthy service: http://52.188.141.107/ms-user/v1/demo/repair
+- Metrics: http://52.188.141.107/ms-user/metrics/
 
 -----
 **Metrics** (.../services/.../UserDataBean.java):
