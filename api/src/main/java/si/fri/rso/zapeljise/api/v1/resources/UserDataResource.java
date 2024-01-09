@@ -81,10 +81,9 @@ public class UserDataResource {
 
     @Operation(description = "Add new user data.", summary = "Register user.")
     @APIResponses({
-            @APIResponse(responseCode = "201",
-                    description = "User successfully registered."
-            ),
-            @APIResponse(responseCode = "405", description = "Validation error.")
+            @APIResponse(responseCode = "201", description = "User successfully registered."),
+            @APIResponse(responseCode = "405", description = "Validation error."),
+            @APIResponse(responseCode = "406", description = "Username already exists.")
     })
     @POST
     @Path("/register")
@@ -99,6 +98,13 @@ public class UserDataResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
+        UserData existingUserData = userDataBean.checkUserData(userData);
+
+        if (existingUserData != null) {
+            log.log(Level.INFO, "Exit 'POST users/register' endpoint - Username already exists.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         userData = userDataBean.createUserData(userData);
 
         log.log(Level.INFO, "Exit 'POST users/register' endpoint.");
@@ -107,7 +113,7 @@ public class UserDataResource {
 
     @Operation(description = "Check user data.", summary = "Login user.")
     @APIResponses({
-            @APIResponse(responseCode = "202", description = "User login successes."),
+            @APIResponse(responseCode = "200", description = "User login successes."),
             @APIResponse(responseCode = "405", description = "Validation error."),
             @APIResponse(responseCode = "400", description = "Bad request."),
             @APIResponse(responseCode = "406", description = "Wrong username or password.")
@@ -138,15 +144,12 @@ public class UserDataResource {
         }
 
         log.log(Level.INFO, "Exit 'POST users/register' endpoint.");
-        return Response.status(Response.Status.ACCEPTED).build();
+        return Response.status(Response.Status.OK).entity(existingUserData).build();
     }
 
     @Operation(description = "Update data for a user (only name and phone).", summary = "Update user.")
     @APIResponses({
-            @APIResponse(
-                    responseCode = "200",
-                    description = "User data successfully updated."
-            )
+            @APIResponse(responseCode = "200", description = "User data successfully updated.")
     })
     @PUT
     @Path("{userDataId}")
@@ -172,14 +175,8 @@ public class UserDataResource {
 
     @Operation(description = "Delete data for a user.", summary = "Delete user.")
     @APIResponses({
-            @APIResponse(
-                    responseCode = "200",
-                    description = "User successfully deleted."
-            ),
-            @APIResponse(
-                    responseCode = "404",
-                    description = "Not found."
-            )
+            @APIResponse(responseCode = "200", description = "User successfully deleted."),
+            @APIResponse(responseCode = "404", description = "Not found.")
     })
     @DELETE
     @Path("{userDataId}")
