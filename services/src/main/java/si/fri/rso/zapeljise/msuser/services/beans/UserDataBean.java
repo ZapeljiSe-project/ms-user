@@ -44,7 +44,7 @@ public class UserDataBean {
     @PostConstruct
     private void init() {
         httpClient = ClientBuilder.newClient();
-        baseUrl = "http://localhost:8080";
+        baseUrl = "http://52.255.222.173/ms-ride";
     }
 
     public List<UserData> getUserData() {

@@ -21,7 +21,7 @@ kumuluzee:
       - ms-user-lib
   openapi-mp:
     ui:
-      specification-server: http://52.188.141.107/ms-user
+      specification-server: http://52.255.222.173/ms-user
   health:
     checks:
       data-source-health-check:

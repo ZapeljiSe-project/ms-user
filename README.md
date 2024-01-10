@@ -80,12 +80,12 @@ mvn clean package...
 
 -----
 **Production URL's:**
-- Backend API available at: http://52.188.141.107/ms-user/v1/users
-- Swagger OpenAPI: http://52.188.141.107/ms-user/api-specs/ui/?url=http://52.188.141.107/ms-user/openapi&oauth2RedirectUrl=http://52.188.141.107/ms-user/api-specs/ui/oauth2-redirect.html
-- Health Check (liveness): http://52.188.141.107/ms-user/health/live
-- Health Check (readiness): http://52.188.141.107/ms-user/health/ready
-- POST call to demonstrate unhealthy service: http://52.188.141.107/ms-user/v1/demo/break
-- POST call to demonstrate healthy service: http://52.188.141.107/ms-user/v1/demo/repair
+- Backend API available at: http://52.255.222.173/ms-user/v1/users
+- Swagger OpenAPI: http://52.255.222.173/ms-user/api-specs/ui/?url=http://52.255.222.173/ms-user/openapi&oauth2RedirectUrl=http://52.255.222.173/ms-user/api-specs/ui/oauth2-redirect.html
+- Health Check (liveness): http://52.255.222.173/ms-user/health/live
+- Health Check (readiness): http://52.255.222.173/ms-user/health/ready
+- POST call to demonstrate unhealthy service: http://52.255.222.173/ms-user/v1/demo/break
+- POST call to demonstrate healthy service: http://52.255.222.173/ms-user/v1/demo/repair
 
 -----
 **Logs (queries):**

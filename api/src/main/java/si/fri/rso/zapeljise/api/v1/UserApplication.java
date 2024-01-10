@@ -16,7 +16,7 @@ import javax.ws.rs.core.Application;
 @OpenAPIDefinition(info = @Info(title = "API for users", version = "v1",
         contact = @Contact(email = "gh6987@student.uni-lj.si"),
         license = @License(name = "dev"), description = "API for managing users."),
-        servers = @Server(url = "http://52.188.141.107/ms-user"))
+        servers = @Server(url = "http://52.255.222.173/ms-user"))
 @ApplicationPath("/v1")
 @CrossOrigin(supportedMethods = "GET, POST, PUT, HEAD, OPTIONS, DELETE")
 public class UserApplication extends Application {
