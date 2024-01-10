@@ -2,18 +2,29 @@ package si.fri.rso.zapeljise.msuser.services.beans;
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
-import org.eclipse.microprofile.metrics.annotation.Counted;
-import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
+import si.fri.rso.zapeljise.msuser.lib.TownDemo;
 import si.fri.rso.zapeljise.msuser.lib.UserData;
 import si.fri.rso.zapeljise.msuser.models.converters.UserDataConverter;
 import si.fri.rso.zapeljise.msuser.models.entities.UserDataEntity;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.UriInfo;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +37,16 @@ public class UserDataBean {
     @Inject
     private EntityManager em;
 
+    // Demo related code and post contruct.
+    private Client httpClient;
+    private String baseUrl;
+
+    @PostConstruct
+    private void init() {
+        httpClient = ClientBuilder.newClient();
+        baseUrl = "http://localhost:8080";
+    }
+
     public List<UserData> getUserData() {
         TypedQuery<UserDataEntity> query = em.createNamedQuery(
                 "UserDataEntity.getAll", UserDataEntity.class);
@@ -33,7 +54,6 @@ public class UserDataBean {
         return resultList.stream().map(UserDataConverter::toDto).collect(Collectors.toList());
     }
 
-    @SimplyTimed(name = "getUserDataFilter_timed_method")
     public List<UserData> getUserDataFilter(UriInfo uriInfo) {
         QueryParameters queryParameters = QueryParameters.query(uriInfo.getRequestUri().getQuery()).defaultOffset(0)
                 .build();
@@ -41,7 +61,6 @@ public class UserDataBean {
                 .map(UserDataConverter::toDto).collect(Collectors.toList());
     }
 
-    @Counted(name = "getUserData_invocation_counter", absolute = true)
     public UserData getUserData(Integer id) {
         UserDataEntity userDataEntity = em.find(UserDataEntity.class, id);
 
@@ -140,6 +159,87 @@ public class UserDataBean {
 
         log.log(Level.INFO, "Successfully deleted the user.");
         return true;
+    }
+
+    public List<TownDemo> getTownsDemo() {
+        log.log(Level.INFO, "Working demo - Connecting to the other MS...");
+        try {
+            return httpClient
+                    .target(baseUrl + "/v1/town")
+                    .request().get(new GenericType<List<TownDemo>>() {
+                    });
+        }
+        catch (WebApplicationException | ProcessingException e) {
+            log.log(Level.WARNING, e.getMessage());
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
+    @CircuitBreaker(requestVolumeThreshold = 3)
+    public List<TownDemo> getTownsDemoWithoutFallback() {
+        log.log(Level.INFO, "Without fallback demo - Connecting to the other MS...");
+        try {
+            return httpClient
+                    .target(baseUrl + "/v1/townnnnnnnn")
+                    .request().get(new GenericType<List<TownDemo>>() {
+                    });
+        }
+        catch (WebApplicationException | ProcessingException e) {
+            log.log(Level.WARNING, e.getMessage());
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
+    @CircuitBreaker(requestVolumeThreshold = 3)
+    @Fallback(fallbackMethod = "getTownsFallback")
+    public List<TownDemo> getTownsDemoWithFallback() {
+        log.log(Level.INFO, "With fallback demo - Connecting to the other MS...");
+        try {
+            return httpClient
+                    .target(baseUrl + "/v1/townnnnnnnn")
+                    .request().get(new GenericType<List<TownDemo>>() {
+                    });
+        }
+        catch (WebApplicationException | ProcessingException e) {
+            log.log(Level.WARNING, e.getMessage());
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    public List<TownDemo> getTownsFallback() {
+        List<TownDemo> biggerTownsOnly = new ArrayList<>();
+
+        TownDemo town1 = new TownDemo();
+        town1.setName("Ljubljana");
+        biggerTownsOnly.add(town1);
+
+        TownDemo town2 = new TownDemo();
+        town2.setName("Maribor");
+        biggerTownsOnly.add(town2);
+
+        TownDemo town3 = new TownDemo();
+        town3.setName("Celje");
+        biggerTownsOnly.add(town3);
+
+        TownDemo town4 = new TownDemo();
+        town4.setName("Koper");
+        biggerTownsOnly.add(town4);
+
+        TownDemo town5 = new TownDemo();
+        town5.setName("Kranj");
+        biggerTownsOnly.add(town5);
+
+        TownDemo town6 = new TownDemo();
+        town6.setName("Novo mesto");
+        biggerTownsOnly.add(town6);
+
+        TownDemo town7 = new TownDemo();
+        town7.setName("Murska Sobota");
+        biggerTownsOnly.add(town7);
+
+        return biggerTownsOnly;
     }
 
     private void beginTx() {

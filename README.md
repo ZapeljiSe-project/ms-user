@@ -77,7 +77,6 @@ mvn clean package...
 - Health Check (readiness): http://localhost:8081/health/ready
 - POST call to demonstrate unhealthy service: http://localhost:8081/v1/demo/break
 - POST call to demonstrate healthy service: http://localhost:8081/v1/demo/repair
-- Metrics: http://localhost:8081/metrics/
 
 -----
 **Production URL's:**
@@ -87,18 +86,6 @@ mvn clean package...
 - Health Check (readiness): http://52.188.141.107/ms-user/health/ready
 - POST call to demonstrate unhealthy service: http://52.188.141.107/ms-user/v1/demo/break
 - POST call to demonstrate healthy service: http://52.188.141.107/ms-user/v1/demo/repair
-- Metrics: http://52.188.141.107/ms-user/metrics/
-
------
-**Metrics** (.../services/.../UserDataBean.java):
-- Measures the total amount of time a method has spent executing **(.../v1/users)**.
-```
-@SimplyTimed(name = "getUserDataFilter_timed_method")
-```
-- Increments a counter on every invocation and thus count total invocations of the method **(.../v1/users/1)**.
-```
-@Counted(name = "getUserData_invocation_counter", absolute = true)
-```
 
 -----
 **Logs (queries):**
