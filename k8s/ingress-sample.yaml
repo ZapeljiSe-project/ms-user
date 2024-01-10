@@ -19,6 +19,13 @@ spec:
                 name: ms-ride
                 port:
                   number: 8080
+          - path: /frontend(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
           - path: /ms-user(/|$)(.*)
             pathType: Prefix
             backend:
